@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://elm-dak.github.io/portfolio/sitemap.xml
