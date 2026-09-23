@@ -1,0 +1,231 @@
+---
+import { Image } from 'astro:assets';
+import portrait from '../assets/portrait.png';
+import Icon from './Icon.astro';
+import { person } from '../data/site';
+import { withBase } from '../lib/paths';
+
+const lines = [person.firstName, person.lastName];
+---
+
+<section class="hero" id="top" data-hero>
+  <div class="hero-grid container">
+    <div class="hero-copy">
+      <p class="eyebrow hero-in">{person.role} · {person.city}</p>
+
+      <h1 class="hero-name" aria-label={person.name} data-hero-name>
+        {
+          lines.map((line) => (
+            <span class="hero-line" aria-hidden="true" data-scramble>
+              {[...line].map((char) => (char === ' ' ? <span class="ch sp"> </span> : <span class="ch">{char}</span>))}
+            </span>
+          ))
+        }
+      </h1>
+
+      <p class="hero-sub hero-in">
+        I build AI agents, data pipelines and the web and mobile apps around them, from first model to production.
+      </p>
+
+      <div class="hero-ctas hero-in">
+        <a class="btn btn-primary" href="#work" data-arrow="down">
+          See my work
+          <Icon name="arrow-down" />
+        </a>
+        <a class="btn" href={withBase(person.cv)} download data-arrow="down">
+          Download CV
+          <Icon name="download" />
+        </a>
+      </div>
+    </div>
+
+    <figure class="hero-portrait" data-portrait>
+      <div class="portrait-panel" data-portrait-panel>
+        <div class="portrait-depth" data-portrait-depth>
+          <Image
+            class="portrait-img"
+            src={portrait}
+            alt={`${person.name}, smiling, in a navy suit and tie`}
+            widths={[420, 640, 822]}
+            sizes="(min-width: 1024px) 36vw, (min-width: 640px) 60vw, 92vw"
+            format="webp"
+            quality={85}
+            loading="eager"
+            fetchpriority="high"
+            data-portrait-img
+          />
+        </div>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: max(640px, 100dvh);
+    display: flex;
+    align-items: center;
+    padding-top: calc(var(--nav-h) + clamp(24px, 4vw, 56px));
+    padding-bottom: clamp(40px, 6vw, 72px);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(32px, 5vw, 80px);
+  }
+
+  .hero-copy {
+    display: grid;
+    gap: 28px;
+    align-content: center;
+  }
+
+  .hero-name {
+    display: grid;
+    font-size: clamp(3rem, 8.1vw, 8.4rem);
+    font-weight: 640;
+    line-height: 0.94;
+    letter-spacing: -0.055em;
+    margin-left: -0.04em;
+  }
+
+  .hero-line {
+    display: block;
+    white-space: nowrap;
+  }
+
+  .hero-line + .hero-line {
+    color: var(--accent);
+  }
+
+  /* One box per letter so the decode glyph can sit on top without moving anything */
+  .ch {
+    position: relative;
+    display: inline-block;
+  }
+
+  .ch.sp {
+    width: 0.24em;
+  }
+
+  .ch.is-waiting,
+  .ch.is-scrambling {
+    color: transparent;
+  }
+
+  .ch :global(.glyph) {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.62em;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--muted);
+  }
+
+  .hero-line + .hero-line .ch :global(.glyph) {
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    max-width: 34ch;
+    font-size: clamp(1.125rem, 1.7vw, 1.375rem);
+    line-height: 1.5;
+    color: var(--ink-soft);
+    text-wrap: pretty;
+  }
+
+  .hero-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .hero-portrait {
+    justify-self: end;
+    width: 100%;
+    max-width: 500px;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .portrait-panel {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background:
+      radial-gradient(120% 80% at 50% 30%, color-mix(in oklab, var(--accent) 78%, white) 0%, transparent 62%),
+      linear-gradient(180deg, var(--accent) 0%, color-mix(in oklab, var(--accent) 80%, black) 100%);
+    box-shadow: 0 30px 60px -30px hsl(var(--shadow-tint) / 0.45);
+  }
+
+  :global([data-theme='dark']) .portrait-panel {
+    background:
+      radial-gradient(120% 80% at 50% 30%, #4b57e8 0%, transparent 62%),
+      linear-gradient(180deg, #3441c9 0%, #1d2585 100%);
+  }
+
+  .portrait-depth {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Centred with left and width only: GSAP owns this element's transform */
+  .portrait-img {
+    position: absolute;
+    left: -8%;
+    bottom: 0;
+    width: 116%;
+    max-width: none;
+    transform-origin: 50% 100%;
+  }
+
+  /* Initial states for the entrance, only while motion is on (see Base.astro) */
+  :global(html.motion) .hero-in {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  :global(html.motion) .hero-name {
+    visibility: hidden;
+  }
+
+  :global(html.motion) .portrait-panel {
+    clip-path: inset(100% 0% 0% 0% round var(--radius-card));
+  }
+
+  :global(html.motion) .portrait-img {
+    transform: translateY(6%) scale(1.06);
+  }
+
+  @media (max-width: 900px) {
+    .hero {
+      min-height: 0;
+      display: block;
+    }
+
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 48px;
+    }
+
+    .hero-name {
+      font-size: clamp(3rem, 13.4vw, 6.5rem);
+    }
+
+    .hero-portrait {
+      justify-self: start;
+      max-width: 520px;
+    }
+
+    .portrait-panel {
+      aspect-ratio: 1 / 1;
+    }
+  }
+</style>

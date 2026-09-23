@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import { withBase } from '../lib/paths';
+---
+
+<Base title="Page not found | El Mestapha Dakouky" description="This page does not exist.">
+  <main id="main" class="nf container">
+    <p class="eyebrow">Error 404</p>
+    <h1>This page does not exist.</h1>
+    <a class="btn btn-primary" href={withBase('/')}>Back to the portfolio</a>
+  </main>
+</Base>
+
+<style>
+  .nf {
+    min-height: 100dvh;
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 24px;
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 620;
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+  }
+</style>

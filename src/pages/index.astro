@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import Work from '../components/Work.astro';
+import About from '../components/About.astro';
+import Experience from '../components/Experience.astro';
+import Archive from '../components/Archive.astro';
+import Toolbox from '../components/Toolbox.astro';
+import Certificates from '../components/Certificates.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Base
+  title="El Mestapha Dakouky | AI & Full-Stack Engineer in Casablanca"
+  description="Data and AI engineer who builds AI agents, data pipelines and the web and mobile apps around them. Five live products, four companies, based in Casablanca."
+>
+  <Nav />
+  <main id="main">
+    <Hero />
+    <Work />
+    <About />
+    <Experience />
+    <Archive />
+    <Toolbox />
+    <Certificates />
+    <Contact />
+  </main>
+  <Footer />
+</Base>

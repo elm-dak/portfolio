@@ -1,0 +1,98 @@
+---
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+import '../styles/global.css';
+import { person } from '../data/site';
+import { withBase } from '../lib/paths';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(withBase('og.png'), Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: person.name,
+  jobTitle: person.role,
+  url: canonical,
+  email: `mailto:${person.email}`,
+  image: ogImage,
+  address: { '@type': 'PostalAddress', addressLocality: person.city, addressCountry: 'MA' },
+  alumniOf: [
+    { '@type': 'CollegeOrUniversity', name: "Université Côte d'Azur" },
+    { '@type': 'CollegeOrUniversity', name: 'EMSI, École Marocaine des Sciences de l\'Ingénieur' },
+  ],
+  knowsLanguage: ['ar', 'en', 'fr'],
+  sameAs: [person.github, person.linkedin],
+};
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#f3f4f6" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/png" href={withBase('favicon.png')} />
+    <link rel="apple-touch-icon" href={withBase('apple-touch-icon.png')} />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="profile:first_name" content={person.firstName} />
+    <meta property="profile:last_name" content={person.lastName} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <!--
+      Runs before first paint: picks the theme (saved choice, else the system's)
+      and turns on motion unless the visitor asked for reduced motion. If the page
+      script has not started after a few seconds, motion is switched off again so
+      nothing stays hidden on a slow connection.
+    -->
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var saved = null;
+        try {
+          saved = localStorage.getItem('theme');
+        } catch (e) {}
+        var theme = saved === 'dark' || saved === 'light' ? saved : dark ? 'dark' : 'light';
+        root.dataset.theme = theme;
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', theme === 'dark' ? '#0d0f13' : '#f3f4f6');
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          root.classList.add('motion');
+          setTimeout(function () {
+            if (!root.dataset.motionReady) root.classList.remove('motion');
+          }, 3500);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

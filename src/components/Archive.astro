@@ -1,0 +1,290 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import TechLogo from './TechLogo.astro';
+import { archive, categories, person } from '../data/site';
+import { brandHex } from '../lib/brand';
+
+const counts = Object.fromEntries(
+  categories.map((c) => [c.id, c.id === 'all' ? archive.length : archive.filter((p) => p.cats.includes(c.id as never)).length]),
+);
+---
+
+<section class="archive container" id="projects" aria-labelledby="archive-title">
+  <div class="section-head">
+    <h2 class="section-title" id="archive-title"><span class="mask"><span>More projects</span></span></h2>
+    <p class="section-lede" data-reveal>
+      Coursework, internship tasks and experiments, from ML models and data pipelines to infrastructure as code.
+    </p>
+  </div>
+
+  <div class="filters" role="group" aria-label="Filter projects by area" data-filters data-reveal>
+    {
+      categories.map((c) => (
+        <button type="button" class="filter" data-filter={c.id} aria-pressed={c.id === 'all' ? 'true' : 'false'}>
+          {c.label}
+          <span class="count mono">{counts[c.id]}</span>
+        </button>
+      ))
+    }
+  </div>
+
+  <p class="sr-only" aria-live="polite" data-filter-status></p>
+
+  <ul class="grid" data-archive>
+    {
+      archive.map((project) => {
+        const hex = brandHex(project.logo);
+        const Tag = project.url ? 'a' : 'div';
+        return (
+          <li class="item" data-cats={project.cats.join(' ')} data-archive-item>
+            <Tag
+              class="card"
+              {...(project.url ? { href: project.url, target: '_blank', rel: 'noopener' } : {})}
+            >
+              <div class="thumb" style={hex ? `--brand: ${hex}` : undefined}>
+                {project.image ? (
+                  <Image src={project.image} alt="" widths={[240, 360]} sizes="120px" format="webp" quality={72} />
+                ) : (
+                  <TechLogo slug={project.logo} class="thumb-logo" />
+                )}
+              </div>
+              <div class="info">
+                <div class="info-top">
+                  <h3 class="name">{project.name}</h3>
+                  <span class="year mono">{project.year}</span>
+                </div>
+                <p class="desc">{project.description}</p>
+                <ul class="tags" aria-label="Built with">
+                  {project.tags.map((tag) => (
+                    <li>{tag}</li>
+                  ))}
+                </ul>
+              </div>
+              {project.url && (
+                <span class="go" aria-hidden="true">
+                  <Icon name="arrow-up-right" />
+                </span>
+              )}
+              {project.url && <span class="sr-only">(source on GitHub, opens in a new tab)</span>}
+            </Tag>
+          </li>
+        );
+      })
+    }
+  </ul>
+
+  <div class="more" data-reveal>
+    <a class="btn" href={`${person.github}?tab=repositories`} target="_blank" rel="noopener" data-arrow="out">
+      All repositories on GitHub
+      <Icon name="arrow-up-right" />
+    </a>
+  </div>
+</section>
+
+<style>
+  .archive {
+    padding-top: var(--section-space);
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    color: var(--ink-soft);
+    font-weight: 520;
+    font-size: 0.9375rem;
+    transition:
+      transform 160ms var(--ease-out),
+      background-color 200ms ease,
+      border-color 200ms ease,
+      color 200ms ease;
+  }
+
+  .filter:active {
+    transform: scale(0.97);
+  }
+
+  .filter[aria-pressed='true'] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--bg);
+  }
+
+  .count {
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .filter:not([aria-pressed='true']):hover {
+      border-color: var(--ink);
+      color: var(--ink);
+    }
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .item[hidden] {
+    display: none;
+  }
+
+  .card {
+    position: relative;
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 20px;
+    height: 100%;
+    padding: 14px;
+    padding-right: 52px;
+    border-radius: 22px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    transition: border-color 200ms ease;
+  }
+
+  .thumb {
+    --brand: var(--muted);
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border-radius: 14px;
+    overflow: hidden;
+    background: color-mix(in oklab, var(--brand) 14%, var(--surface));
+    color: color-mix(in oklab, var(--brand) 70%, var(--ink));
+  }
+
+  :global([data-theme='dark']) .thumb {
+    background: color-mix(in oklab, var(--brand) 22%, var(--surface));
+    color: color-mix(in oklab, var(--brand) 45%, var(--ink));
+  }
+
+  .thumb :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left top;
+    transition: transform 300ms var(--ease-out);
+  }
+
+  .thumb :global(.thumb-logo) {
+    width: 44px;
+    height: 44px;
+    transition: transform 300ms var(--ease-out);
+  }
+
+  .info {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    padding-top: 4px;
+  }
+
+  .info-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  .year {
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .desc {
+    color: var(--muted);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  .go {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    color: var(--muted);
+    transition:
+      transform 200ms var(--ease-out),
+      color 200ms ease;
+  }
+
+  .go :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a.card:hover {
+      border-color: var(--line-strong);
+    }
+
+    a.card:hover .go {
+      color: var(--accent);
+      transform: translate(2px, -2px);
+    }
+
+    a.card:hover .thumb :global(img),
+    a.card:hover .thumb :global(.thumb-logo) {
+      transform: scale(1.05);
+    }
+  }
+
+  .more {
+    margin-top: 32px;
+  }
+
+  @media (max-width: 860px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .card {
+      grid-template-columns: 76px minmax(0, 1fr);
+      gap: 14px;
+      padding-right: 40px;
+    }
+
+    .thumb {
+      border-radius: 12px;
+    }
+
+    .thumb :global(.thumb-logo) {
+      width: 32px;
+      height: 32px;
+    }
+
+    .go {
+      top: 12px;
+      right: 10px;
+    }
+  }
+</style>

@@ -1,0 +1,102 @@
+---
+import TechLogo from './TechLogo.astro';
+import { toolbox } from '../data/site';
+
+// Icon shown for tools that have no brand logo in simple-icons
+const fallbackFor: Record<string, 'brain' | 'database' | 'cloud'> = {
+  'AI & ML': 'brain',
+  Data: 'database',
+  Databases: 'database',
+  'DevOps & Cloud': 'cloud',
+};
+---
+
+<section class="toolbox container" id="stack" aria-labelledby="toolbox-title">
+  <div class="section-head">
+    <h2 class="section-title" id="toolbox-title"><span class="mask"><span>Toolbox</span></span></h2>
+    <p class="section-lede" data-reveal>What I reach for, grouped by the kind of problem it solves.</p>
+  </div>
+
+  <div class="groups">
+    {
+      toolbox.map((group) => (
+        <div class="group" data-tool-group>
+          <h3 class="group-name">{group.name}</h3>
+          <ul class="tools">
+            {group.tools.map((tool) => (
+              <li class="tool" data-tool>
+                <TechLogo slug={tool.logo} fallback={fallbackFor[group.name] ?? 'database'} class="tool-logo" />
+                <span>{tool.name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .toolbox {
+    padding-top: var(--section-space);
+  }
+
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(36px, 5vw, 56px) clamp(32px, 5vw, 72px);
+  }
+
+  .group {
+    display: grid;
+    gap: 16px;
+    align-content: start;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  .group-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tool {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 0 14px 0 12px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .tool :global(.tool-logo) {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    color: var(--muted);
+  }
+
+  :global(html.motion) .tool {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  @media (max-width: 760px) {
+    .groups {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,28 @@
+---
+import * as simpleIcons from 'simple-icons';
+import Icon, { type IconName } from './Icon.astro';
+
+interface Props {
+  /** simple-icons slug, for example "springboot" */
+  slug?: string;
+  /** Phosphor icon used when the brand has no simple-icons entry */
+  fallback?: IconName;
+  class?: string;
+}
+
+const { slug, fallback = 'database', class: className } = Astro.props;
+
+type SimpleIcon = { title: string; path: string; hex: string };
+const key = slug ? `si${slug.charAt(0).toUpperCase()}${slug.slice(1)}` : '';
+const icon = (simpleIcons as unknown as Record<string, SimpleIcon | undefined>)[key];
+---
+
+{
+  icon ? (
+    <svg class={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d={icon.path} />
+    </svg>
+  ) : (
+    <Icon name={fallback} class={className} />
+  )
+}

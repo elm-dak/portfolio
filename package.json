@@ -1,0 +1,31 @@
+{
+  "name": "portfolio",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Portfolio of El Mestapha Dakouky, AI and full-stack engineer in Casablanca.",
+  "homepage": "https://elm-dak.github.io/portfolio",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "deploy": "astro build && gh-pages -d dist -t -u \"Dakouky Elmestapha <109641583+elm-dak@users.noreply.github.com>\" -m \"Deploy portfolio\""
+  },
+  "dependencies": {
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/geist-mono": "^5.3.0",
+    "astro": "5.18.2",
+    "gsap": "^3.15.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@phosphor-icons/core": "^2.1.1",
+    "gh-pages": "^6.3.0",
+    "simple-icons": "^16.32.0",
+    "typescript": "~5.9.3"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

@@ -1,0 +1,366 @@
+/*
+ * Tokens and base styles.
+ * Shape rule for the whole page: buttons, chips and tags are full pills,
+ * media and cards use --radius-media or --radius-card, inputs use --radius-input.
+ */
+
+:root {
+  --bg: #f3f4f6;
+  --bg-sunken: #e8eaee;
+  --surface: #fbfbfc;
+  --ink: #111318;
+  --ink-soft: #33373f;
+  --muted: #5d626d;
+  --line: #d8dbe1;
+  --line-strong: #b9bec8;
+  --accent: #3b4cf5;
+  --accent-strong: #2f3fe0;
+  --accent-ink: #f6f7fb;
+  --accent-soft: #e2e5fe;
+  --focus: #3b4cf5;
+  --shadow-tint: 222 30% 30%;
+
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', monospace;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  --radius-card: 28px;
+  --radius-media: 16px;
+  --radius-input: 12px;
+
+  --gutter: clamp(16px, 4vw, 48px);
+  --maxw: 1320px;
+  --nav-h: 68px;
+  --section-space: clamp(88px, 12vw, 168px);
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #0d0f13;
+  --bg-sunken: #13161b;
+  --surface: #171a20;
+  --ink: #eceef2;
+  --ink-soft: #c9ccd3;
+  --muted: #9ba0ab;
+  --line: #262a32;
+  --line-strong: #3a3f4a;
+  --accent: #7d88ff;
+  --accent-strong: #929cff;
+  --accent-ink: #0d0f13;
+  --accent-soft: #1d2140;
+  --focus: #929cff;
+  --shadow-tint: 230 40% 2%;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--bg);
+  /* keeps the width steady when a dialog locks scrolling */
+  scrollbar-gutter: stable;
+}
+
+html.motion {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+figure,
+blockquote {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+section[id] {
+  scroll-margin-top: calc(var(--nav-h) + 12px);
+}
+
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 600;
+  transform: translateY(-160%);
+  transition: transform 200ms var(--ease-out);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* Type */
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.section-head {
+  display: grid;
+  gap: 18px;
+  margin-bottom: clamp(40px, 6vw, 72px);
+}
+
+.section-title {
+  font-size: clamp(2.5rem, 6.4vw, 5.25rem);
+  font-weight: 620;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+  /* room for descenders under the line mask */
+  padding-bottom: 0.08em;
+}
+
+.section-title .mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.section-title .mask > span {
+  display: block;
+}
+
+.section-lede {
+  max-width: 56ch;
+  color: var(--muted);
+  font-size: clamp(1.0625rem, 1.4vw, 1.1875rem);
+  text-wrap: pretty;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+}
+
+/* Buttons */
+
+.btn {
+  --btn-bg: var(--surface);
+  --btn-ink: var(--ink);
+  --btn-line: var(--line-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  border: 1px solid var(--btn-line);
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  font-weight: 560;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition:
+    transform 160ms var(--ease-out),
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  transition: transform 200ms var(--ease-out);
+}
+
+.btn-primary {
+  --btn-bg: var(--accent);
+  --btn-ink: var(--accent-ink);
+  --btn-line: var(--accent);
+}
+
+.btn-sm {
+  min-height: 40px;
+  padding: 0 16px;
+  font-size: 0.9375rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    --btn-line: var(--ink);
+  }
+
+  .btn-primary:hover {
+    --btn-bg: var(--accent-strong);
+    --btn-line: var(--accent-strong);
+  }
+
+  .btn[data-arrow='down']:hover svg {
+    transform: translateY(2px);
+  }
+
+  .btn[data-arrow='out']:hover svg {
+    transform: translate(2px, -2px);
+  }
+}
+
+/* Tags */
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tags li {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* Theme switch: the new theme grows as a circle from the toggle (see theme.ts) */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+/*
+ * Scroll reveals. Initial states only apply while html.motion is set, which the
+ * head script adds when the visitor has not asked for reduced motion, and
+ * removes again if the page script never arrives. Without it, nothing is hidden.
+ */
+
+html.motion [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+html.motion .section-title .mask > span {
+  transform: translateY(104%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

@@ -1,0 +1,175 @@
+---
+import { education, facts, languages } from '../data/site';
+
+const statement =
+  "I'm El Mestapha, a data and AI engineer from Casablanca. I trained in computer science and networks at EMSI and hold a Master in MIAGE from Université Côte d'Azur. I like owning the whole path: the data, the model, the API and the screen people actually touch.";
+const words = statement.split(' ');
+---
+
+<section class="about container" id="about" aria-labelledby="about-title">
+  <h2 class="section-title" id="about-title"><span class="mask"><span>About</span></span></h2>
+
+  <p class="statement" data-words>
+    {
+      words.map((word, i) => (
+        <>
+          <span class="w">{word}</span>
+          {i < words.length - 1 ? ' ' : ''}
+        </>
+      ))
+    }
+  </p>
+
+  <div class="about-grid">
+    <dl class="facts">
+      {
+        facts.map((fact) => (
+          <div class="fact" data-reveal>
+            <dt class="mono">{fact.label}</dt>
+            <dd>{fact.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <div class="about-col" data-reveal>
+      <h3 class="col-title">Education</h3>
+      <ul class="edu">
+        {
+          education.map((item) => (
+            <li>
+              <p class="edu-title">{item.title}</p>
+              <p class="edu-meta">
+                {item.school}
+                {item.detail ? `, ${item.detail}` : ''}
+              </p>
+              <p class="mono edu-years">{item.years}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="about-col" data-reveal>
+      <h3 class="col-title">Languages</h3>
+      <ul class="langs">
+        {
+          languages.map((lang) => (
+            <li>
+              <span>{lang.name}</span>
+              <span class="mono">{lang.level}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about {
+    padding-top: var(--section-space);
+    display: grid;
+    gap: clamp(32px, 5vw, 56px);
+  }
+
+  .statement {
+    max-width: 30ch;
+    font-size: clamp(1.75rem, 3.6vw, 3.25rem);
+    font-weight: 560;
+    line-height: 1.18;
+    letter-spacing: -0.035em;
+    text-wrap: pretty;
+  }
+
+  /* stack.ts scrubs each word from dim to full as the paragraph crosses the screen */
+  :global(html.motion) .statement .w {
+    opacity: 0.18;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 0.7fr);
+    gap: clamp(32px, 5vw, 72px);
+    margin-top: clamp(16px, 3vw, 40px);
+    padding-top: clamp(28px, 4vw, 48px);
+    border-top: 1px solid var(--line);
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 24px;
+    margin: 0;
+    align-content: start;
+  }
+
+  .fact {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 4px;
+  }
+
+  .fact dt {
+    color: var(--muted);
+  }
+
+  .fact dd {
+    margin: 0;
+    font-size: clamp(2.5rem, 4.4vw, 3.75rem);
+    font-weight: 620;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .col-title {
+    margin-bottom: 18px;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .edu {
+    display: grid;
+    gap: 20px;
+  }
+
+  .edu-title {
+    font-weight: 560;
+    line-height: 1.35;
+  }
+
+  .edu-meta {
+    color: var(--muted);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+
+  .edu-years {
+    margin-top: 4px;
+    color: var(--muted);
+  }
+
+  .langs {
+    display: grid;
+    gap: 14px;
+  }
+
+  .langs li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .langs .mono {
+    color: var(--muted);
+  }
+
+  @media (max-width: 900px) {
+    .about-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

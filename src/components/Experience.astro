@@ -1,0 +1,206 @@
+---
+import { experience } from '../data/site';
+---
+
+<section class="exp container" id="experience" aria-labelledby="exp-title">
+  <div class="section-head">
+    <h2 class="section-title" id="exp-title"><span class="mask"><span>Experience</span></span></h2>
+  </div>
+
+  <div class="timeline" data-timeline>
+    <span class="rail" aria-hidden="true"><span class="rail-fill" data-rail-fill></span></span>
+    <ol class="entries">
+    {
+      experience.map((role) => (
+        <li class="entry" data-entry>
+          <p class="when mono">
+            <span>
+              {role.start} to {role.end}
+            </span>
+            <span class="where">{role.place}</span>
+          </p>
+          <span class="node" aria-hidden="true" />
+          <div class="body" data-entry-body>
+            <h3 class="role">{role.title}</h3>
+            <p class="org">{role.org}</p>
+            <ul class="points">
+              {role.points.map((point) => (
+                <li>{point}</li>
+              ))}
+            </ul>
+            <ul class="tags" aria-label="Tools">
+              {role.stack.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </li>
+      ))
+    }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .exp {
+    padding-top: var(--section-space);
+  }
+
+  .timeline {
+    --rail-x: 240px;
+    --col-gap: clamp(24px, 4vw, 56px);
+    position: relative;
+  }
+
+  .entries {
+    display: grid;
+    gap: clamp(48px, 7vw, 88px);
+  }
+
+  .rail {
+    position: absolute;
+    top: 10px;
+    bottom: 0;
+    left: calc(var(--rail-x) + var(--col-gap) + 7px);
+    width: 2px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .rail-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform-origin: 50% 0%;
+    transform: scaleY(1);
+  }
+
+  :global(html.motion) .rail-fill {
+    transform: scaleY(0);
+  }
+
+  .entry {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--rail-x) 16px minmax(0, 1fr);
+    column-gap: var(--col-gap);
+    align-items: start;
+  }
+
+  .when {
+    display: grid;
+    gap: 4px;
+    padding-top: 6px;
+    color: var(--ink-soft);
+  }
+
+  .where {
+    color: var(--muted);
+  }
+
+  .node {
+    position: relative;
+    z-index: 1;
+    width: 16px;
+    height: 16px;
+    margin-top: 8px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--line-strong);
+    transition:
+      background-color 250ms var(--ease-out),
+      border-color 250ms var(--ease-out),
+      transform 250ms var(--ease-out);
+  }
+
+  .entry.is-lit .node,
+  :global(html:not(.motion)) .node {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .entry.is-lit .node {
+    transform: scale(1.15);
+  }
+
+  .body {
+    display: grid;
+    gap: 10px;
+    max-width: 62ch;
+  }
+
+  .role {
+    font-size: clamp(1.5rem, 2.6vw, 2.125rem);
+    font-weight: 620;
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+  }
+
+  .org {
+    font-weight: 560;
+    color: var(--accent);
+  }
+
+  .points {
+    display: grid;
+    gap: 8px;
+    margin: 6px 0 8px;
+    color: var(--ink-soft);
+  }
+
+  .points li {
+    position: relative;
+    padding-left: 18px;
+  }
+
+  .points li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.72em;
+    width: 8px;
+    height: 1px;
+    background: var(--line-strong);
+  }
+
+  :global(html.motion) .body {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  @media (max-width: 760px) {
+    .timeline {
+      --rail-x: 0px;
+    }
+
+    .rail {
+      left: 7px;
+    }
+
+    .entry {
+      grid-template-columns: 16px minmax(0, 1fr);
+      column-gap: 20px;
+      row-gap: 8px;
+    }
+
+    .when {
+      grid-column: 2;
+      grid-row: 1;
+      padding-top: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+    }
+
+    .node {
+      grid-column: 1;
+      grid-row: 1;
+      margin-top: 6px;
+    }
+
+    .body {
+      grid-column: 2;
+    }
+  }
+</style>

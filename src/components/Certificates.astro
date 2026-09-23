@@ -1,0 +1,351 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Icon from './Icon.astro';
+import { certificates } from '../data/site';
+
+const withImages = certificates.filter((c) => c.image);
+const full = await Promise.all(
+  withImages.map((c) => getImage({ src: c.image!, width: 1400, format: 'webp', quality: 82 })),
+);
+const n = withImages.length;
+---
+
+<section class="certs" id="certificates" aria-labelledby="certs-title">
+  <div class="container section-head">
+    <h2 class="section-title" id="certs-title"><span class="mask"><span>Certificates</span></span></h2>
+    <p class="section-lede" data-reveal>
+      Ten courses and trainings, from DevOps on AWS to UX design. Open a certificate to read it or verify it.
+    </p>
+  </div>
+
+  <div class="deck-wrap container">
+    <div class="deck" data-deck>
+      {
+        withImages.map((cert, i) => {
+          const offset = i - (n - 1) / 2;
+          return (
+            <button
+              type="button"
+              class="deck-card"
+              data-deck-card
+              data-offset={offset}
+              data-full={full[i].src}
+              data-title={cert.title}
+              data-issuer={cert.issuer}
+              data-date={cert.date}
+              data-verify={cert.verify ?? ''}
+              style={`--o: ${offset}; z-index: ${i + 1};`}
+            >
+              <span class="deck-lift">
+                <Image
+                  src={cert.image!}
+                  alt=""
+                  widths={[320, 480, 760]}
+                  sizes="(min-width: 900px) 26vw, 78vw"
+                  format="webp"
+                  quality={76}
+                />
+              </span>
+              <span class="sr-only">
+                Open certificate: {cert.title}, {cert.issuer}
+              </span>
+            </button>
+          );
+        })
+      }
+    </div>
+  </div>
+
+  <ul class="cert-list container">
+    {
+      certificates.map((cert) => {
+        const index = withImages.indexOf(cert);
+        return (
+          <li class="cert" data-reveal>
+            <div class="cert-text">
+              <p class="cert-title">{cert.title}</p>
+              <p class="cert-meta">
+                {cert.issuer}
+                {cert.date && <span class="mono"> · {cert.date}</span>}
+              </p>
+            </div>
+            <div class="cert-actions">
+              {index >= 0 && (
+                <button type="button" class="cert-action" data-open-cert={index}>
+                  View
+                </button>
+              )}
+              {cert.verify && (
+                <a class="cert-action" href={cert.verify} target="_blank" rel="noopener">
+                  Verify
+                  <span class="sr-only"> {cert.title} on Coursera (opens in a new tab)</span>
+                </a>
+              )}
+            </div>
+          </li>
+        );
+      })
+    }
+  </ul>
+
+  <dialog class="cert-dialog" data-cert-dialog aria-labelledby="cert-dialog-title">
+    <div class="cert-panel" data-cert-panel>
+      <img class="cert-full" alt="" data-cert-img width="1400" height="1050" />
+      <div class="cert-caption">
+        <div>
+          <p class="cert-dialog-title" id="cert-dialog-title" data-cert-title></p>
+          <p class="cert-meta" data-cert-meta></p>
+        </div>
+        <div class="cert-dialog-actions">
+          <a class="btn btn-sm" href="#" target="_blank" rel="noopener" data-cert-verify data-arrow="out">
+            <Icon name="seal-check" />
+            Verify
+          </a>
+          <button type="button" class="btn btn-sm" data-cert-close>
+            <Icon name="x" />
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+</section>
+
+<style>
+  .certs {
+    padding-top: var(--section-space);
+  }
+
+  .deck-wrap {
+    margin-bottom: clamp(40px, 6vw, 72px);
+  }
+
+  .deck {
+    --card-w: min(24vw, 360px);
+    position: relative;
+    height: calc(var(--card-w) * 0.78 + 120px);
+  }
+
+  /* Centred with negative margins (card is 4:3): GSAP owns this element's transform */
+  .deck-card {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--card-w);
+    margin-left: calc(var(--card-w) / -2);
+    margin-top: calc(var(--card-w) * -0.375);
+    /* Fanned layout, used as is when motion is off; certs.ts scrubs into it otherwise */
+    transform: translate(calc(var(--o) * var(--card-w) * 0.46), calc(var(--o) * var(--o) * 7px))
+      rotate(calc(var(--o) * 4deg));
+    border-radius: 12px;
+  }
+
+  .deck-lift {
+    display: block;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow:
+      0 0 0 1px hsl(var(--shadow-tint) / 0.12),
+      0 18px 40px -18px hsl(var(--shadow-tint) / 0.5);
+    transition: transform 240ms var(--ease-out);
+  }
+
+  .deck-lift :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .deck-card:hover {
+      z-index: 20 !important;
+    }
+
+    .deck-card:hover .deck-lift {
+      transform: translateY(-14px);
+    }
+  }
+
+  .deck-card:active .deck-lift {
+    transform: translateY(-14px) scale(0.98);
+  }
+
+  .cert-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 48px;
+  }
+
+  .cert {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+  }
+
+  .cert-title {
+    font-weight: 560;
+    line-height: 1.35;
+  }
+
+  .cert-meta {
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+
+  .cert-actions {
+    display: flex;
+    gap: 6px;
+    flex: none;
+  }
+
+  .cert-action {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    font-size: 0.875rem;
+    font-weight: 520;
+    color: var(--ink-soft);
+    transition:
+      transform 160ms var(--ease-out),
+      border-color 200ms ease,
+      color 200ms ease;
+  }
+
+  .cert-action:active {
+    transform: scale(0.97);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .cert-action:hover {
+      border-color: var(--ink);
+      color: var(--ink);
+    }
+  }
+
+  /* Dialog: covers the screen with its own scrim, the panel scales in */
+  .cert-dialog {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: var(--gutter);
+    border: 0;
+    background: rgb(7 8 11 / 0.74);
+    color: var(--ink);
+    opacity: 0;
+    transition: opacity 250ms var(--ease-out);
+  }
+
+  .cert-dialog[open] {
+    display: grid;
+    place-items: center;
+  }
+
+  .cert-dialog::backdrop {
+    background: transparent;
+  }
+
+  .cert-dialog.is-open {
+    opacity: 1;
+  }
+
+  .cert-panel {
+    width: min(100%, 980px);
+    max-height: 100%;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--surface);
+    transform: scale(0.96);
+    transition: transform 250ms var(--ease-out);
+  }
+
+  .cert-dialog.is-open .cert-panel {
+    transform: scale(1);
+  }
+
+  .cert-full {
+    width: 100%;
+    height: 100%;
+    max-height: 72dvh;
+    object-fit: contain;
+    background: #fff;
+  }
+
+  .cert-caption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 22px;
+  }
+
+  .cert-dialog-title {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .cert-dialog-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  [data-cert-verify][hidden] {
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .deck {
+      --card-w: min(78vw, 420px);
+      height: auto;
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding: 8px var(--gutter) 24px;
+      margin-inline: calc(var(--gutter) * -1);
+      scrollbar-width: none;
+    }
+
+    .deck::-webkit-scrollbar {
+      display: none;
+    }
+
+    .deck-card {
+      position: relative;
+      left: auto;
+      top: auto;
+      flex: none;
+      margin: 0;
+      transform: none;
+      scroll-snap-align: center;
+    }
+
+    .cert-list {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cert-dialog,
+    .cert-panel {
+      transition-duration: 150ms;
+    }
+
+    .cert-panel {
+      transform: none;
+    }
+  }
+</style>

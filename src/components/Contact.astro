@@ -1,0 +1,337 @@
+---
+import Icon from './Icon.astro';
+import { person } from '../data/site';
+
+const title = "Let's talk.";
+---
+
+<section class="contact" id="contact" aria-labelledby="contact-title" data-contact>
+  <div class="container contact-grid">
+    <div class="contact-head">
+      <p class="eyebrow" data-reveal>Open to freelance projects and full-time roles</p>
+      <h2 class="contact-title" id="contact-title" aria-label={title} data-proximity>
+        {[...title].map((char) => (char === ' ' ? <span class="pc sp" aria-hidden="true"> </span> : <span class="pc" aria-hidden="true">{char}</span>))}
+      </h2>
+    </div>
+
+    <div class="contact-copy">
+      <p class="contact-lede" data-reveal>
+        Tell me about your product, a role, or a problem hiding in your data. I read every message and answer by email.
+      </p>
+
+      <ul class="channels" data-reveal>
+        <li>
+          <button type="button" class="channel copy" data-copy={person.email}>
+            <Icon name="envelope" />
+            <span class="channel-text">{person.email}</span>
+            <span class="copy-state" aria-hidden="true">
+              <span class="copy-label" data-copy-label>Copy</span>
+              <span class="copy-done"><Icon name="check" />Copied</span>
+            </span>
+            <span class="sr-only" data-copy-status aria-live="polite"></span>
+          </button>
+        </li>
+        <li>
+          <a class="channel" href={person.whatsapp} target="_blank" rel="noopener">
+            <Icon name="whatsapp" />
+            <span class="channel-text">WhatsApp {person.phoneDisplay}</span>
+          </a>
+        </li>
+        <li>
+          <a class="channel" href={person.linkedin} target="_blank" rel="noopener">
+            <Icon name="linkedin" />
+            <span class="channel-text">LinkedIn</span>
+          </a>
+        </li>
+        <li>
+          <a class="channel" href={person.github} target="_blank" rel="noopener">
+            <Icon name="github" />
+            <span class="channel-text">GitHub, elm-dak</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <form class="form" data-contact-form novalidate data-reveal>
+      <div class="field">
+        <label for="cf-name">Your name</label>
+        <input id="cf-name" name="user_name" type="text" autocomplete="name" required maxlength="120" />
+        <p class="error" id="cf-name-error" data-error-for="user_name"></p>
+      </div>
+      <div class="field">
+        <label for="cf-email">Email</label>
+        <input id="cf-email" name="user_email" type="email" autocomplete="email" required maxlength="160" />
+        <p class="error" id="cf-email-error" data-error-for="user_email"></p>
+      </div>
+      <div class="field">
+        <label for="cf-message">Message</label>
+        <textarea id="cf-message" name="message" rows="6" required maxlength="4000"></textarea>
+        <p class="error" id="cf-message-error" data-error-for="message"></p>
+      </div>
+      <!-- Left empty by people, filled in by most spam bots -->
+      <div class="trap" aria-hidden="true">
+        <label for="cf-company">Company</label>
+        <input id="cf-company" name="company" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+      <button class="btn btn-primary submit" type="submit" data-submit>
+        <span data-submit-label>Send message</span>
+        <Icon name="send" />
+      </button>
+      <p class="form-status" role="status" data-form-status></p>
+    </form>
+  </div>
+</section>
+
+<style>
+  .contact {
+    padding-top: var(--section-space);
+    padding-bottom: clamp(72px, 10vw, 120px);
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: clamp(36px, 5vw, 64px) clamp(40px, 6vw, 96px);
+    align-items: start;
+  }
+
+  .contact-head {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 20px;
+  }
+
+  .contact-copy {
+    display: grid;
+    gap: 24px;
+    align-content: start;
+  }
+
+  .contact-title {
+    font-size: clamp(3.5rem, 10.5vw, 10rem);
+    font-weight: 600;
+    line-height: 0.95;
+    letter-spacing: -0.055em;
+    white-space: nowrap;
+    margin-left: -0.04em;
+  }
+
+  .pc {
+    display: inline-block;
+  }
+
+  .pc.sp {
+    width: 0.22em;
+  }
+
+  .contact-lede {
+    max-width: 42ch;
+    color: var(--ink-soft);
+    font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+    text-wrap: pretty;
+  }
+
+  .channels {
+    display: grid;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .channel {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 4px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    color: var(--ink);
+    transition: border-color 200ms ease;
+  }
+
+  .channel :global(svg) {
+    width: 20px;
+    height: 20px;
+    flex: none;
+    color: var(--accent);
+  }
+
+  .channel-text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .channel:hover {
+      border-color: var(--ink);
+    }
+  }
+
+  .copy-state {
+    position: relative;
+    display: grid;
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .copy-label,
+  .copy-done {
+    grid-area: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    transition:
+      opacity 180ms var(--ease-out),
+      transform 180ms var(--ease-out);
+  }
+
+  .copy-done {
+    color: var(--accent);
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  .copy-done :global(svg) {
+    width: 14px;
+    height: 14px;
+  }
+
+  .copy.is-copied .copy-label {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  .copy.is-copied .copy-done {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Form */
+
+  .form {
+    display: grid;
+    gap: 18px;
+    padding: clamp(22px, 3vw, 36px);
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+
+  .field {
+    display: grid;
+    gap: 8px;
+  }
+
+  .field label {
+    font-size: 0.9375rem;
+    font-weight: 560;
+    color: var(--ink);
+  }
+
+  .field input,
+  .field textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border-radius: var(--radius-input);
+    border: 1px solid var(--line-strong);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 1rem;
+    line-height: 1.5;
+    transition:
+      border-color 200ms ease,
+      box-shadow 200ms ease;
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 140px;
+  }
+
+  .field input:focus-visible,
+  .field textarea:focus-visible {
+    outline: none;
+    border-color: var(--focus);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--focus) 28%, transparent);
+  }
+
+  .field [aria-invalid='true'] {
+    border-color: #c62f3d;
+  }
+
+  :global([data-theme='dark']) .field [aria-invalid='true'] {
+    border-color: #ff7a85;
+  }
+
+  .error {
+    min-height: 0;
+    font-size: 0.875rem;
+    color: #b3232f;
+  }
+
+  :global([data-theme='dark']) .error {
+    color: #ff8f98;
+  }
+
+  .error:empty {
+    display: none;
+  }
+
+  .trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .submit {
+    justify-self: start;
+  }
+
+  .submit[aria-busy='true'] {
+    opacity: 0.72;
+    pointer-events: none;
+  }
+
+  .form-status {
+    font-size: 0.9375rem;
+    color: var(--ink-soft);
+  }
+
+  .form-status:empty {
+    display: none;
+  }
+
+  .form-status.is-error {
+    color: #b3232f;
+  }
+
+  :global([data-theme='dark']) .form-status.is-error {
+    color: #ff8f98;
+  }
+
+  @media (max-width: 420px) {
+    .channel {
+      gap: 12px;
+      font-size: 0.96875rem;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .contact-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .contact-title {
+      font-size: clamp(3.25rem, 17vw, 7rem);
+    }
+  }
+</style>

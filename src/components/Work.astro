@@ -1,0 +1,275 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { selectedWork } from '../data/site';
+---
+
+<section class="work" id="work" aria-labelledby="work-title">
+  <div class="container section-head">
+    <h2 class="section-title" id="work-title"><span class="mask"><span>Selected work</span></span></h2>
+    <p class="section-lede" data-reveal>
+      Five products I designed, built and shipped on my own. All of them are live, so open any of them and try it.
+    </p>
+  </div>
+
+  <div class="stack container" data-stack>
+    {
+      selectedWork.map((project, i) => (
+        <>
+          <div class="stack-sentinel" aria-hidden="true" data-stack-sentinel />
+          <article
+            class="stack-card"
+            data-stack-card
+            aria-labelledby={`work-${project.slug}`}
+            style={`--i: ${i}; --card-bg: ${project.theme.bg}; --card-ink: ${project.theme.ink}; --card-muted: ${project.theme.muted}; --card-line: ${project.theme.line};`}
+          >
+            <div class="card-copy">
+              <p class="card-meta mono">
+                {project.year} · {project.role}
+              </p>
+              <h3 class="card-name" id={`work-${project.slug}`}>
+                {project.name}
+              </h3>
+              <p class="card-tagline">{project.tagline}</p>
+              <p class="card-desc">{project.description}</p>
+              <ul class="card-stack" aria-label="Built with">
+                {project.stack.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+              <a class="card-link" href={project.url} target="_blank" rel="noopener" data-arrow="out">
+                Open {project.name}
+                <Icon name="arrow-up-right" />
+                <span class="sr-only">(opens in a new tab)</span>
+              </a>
+            </div>
+
+            <div class="card-media">
+              <div class="shot shot-desktop">
+                <Image
+                  src={project.desktop}
+                  alt={`${project.name} home page on a desktop screen`}
+                  widths={[720, 1080, 1440]}
+                  sizes="(min-width: 1024px) 56vw, 92vw"
+                  format="webp"
+                  quality={78}
+                />
+              </div>
+              <div class="shot shot-phone">
+                <Image
+                  src={project.phone}
+                  alt={`${project.name} on a phone`}
+                  widths={[260, 390]}
+                  sizes="(min-width: 1024px) 13vw, 30vw"
+                  format="webp"
+                  quality={78}
+                />
+              </div>
+            </div>
+
+            <div class="card-dim" aria-hidden="true" data-stack-dim />
+          </article>
+        </>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .work {
+    padding-top: var(--section-space);
+  }
+
+  .stack {
+    --stick: calc(var(--nav-h) + 20px);
+    display: grid;
+    gap: 0;
+    padding-bottom: 8vh;
+  }
+
+  .stack-sentinel {
+    height: 0;
+  }
+
+  .stack-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.25fr);
+    gap: clamp(28px, 4vw, 64px);
+    align-items: center;
+    min-height: min(720px, calc(100dvh - var(--nav-h) - 48px));
+    padding: clamp(28px, 4vw, 56px);
+    border-radius: var(--radius-card);
+    background: var(--card-bg);
+    color: var(--card-ink);
+    overflow: hidden;
+    transform-origin: 50% 0%;
+    margin-bottom: 14vh;
+    box-shadow: 0 -1px 0 0 var(--card-line) inset;
+  }
+
+  .stack-card:last-of-type {
+    margin-bottom: 0;
+  }
+
+  /* Cards pin under the nav, each a few pixels lower so the edges of earlier ones stay visible */
+  :global(html.motion) .stack-card {
+    position: sticky;
+    top: calc(var(--stick) + var(--i) * 10px);
+  }
+
+  .card-copy {
+    display: grid;
+    gap: 16px;
+    align-content: center;
+  }
+
+  .card-meta {
+    color: var(--card-muted);
+  }
+
+  .card-name {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 640;
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  .card-tagline {
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    font-weight: 560;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  .card-desc {
+    max-width: 46ch;
+    color: var(--card-muted);
+    text-wrap: pretty;
+  }
+
+  .card-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .card-stack li {
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--card-line);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--card-muted);
+    white-space: nowrap;
+  }
+
+  .card-link {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    margin-top: 8px;
+    padding: 0 22px;
+    border-radius: 999px;
+    background: var(--card-ink);
+    color: var(--card-bg);
+    font-weight: 580;
+    white-space: nowrap;
+    transition: transform 160ms var(--ease-out);
+  }
+
+  .card-link:active {
+    transform: scale(0.97);
+  }
+
+  .card-link :global(svg) {
+    width: 18px;
+    height: 18px;
+    transition: transform 200ms var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .card-link:hover :global(svg) {
+      transform: translate(2px, -2px);
+    }
+  }
+
+  .card-media {
+    position: relative;
+    padding-bottom: 7%;
+    padding-right: 5%;
+  }
+
+  .shot {
+    overflow: hidden;
+    background: var(--card-bg);
+    box-shadow: 0 0 0 1px var(--card-line);
+  }
+
+  .shot :global(img) {
+    width: 100%;
+  }
+
+  .shot-desktop {
+    border-radius: var(--radius-media);
+    aspect-ratio: 1440 / 716;
+  }
+
+  .shot-phone {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 24%;
+    aspect-ratio: 780 / 1560;
+    border-radius: 18px;
+    box-shadow:
+      0 0 0 5px var(--card-bg),
+      0 0 0 6px var(--card-line),
+      0 24px 48px -16px rgb(0 0 0 / 0.5);
+  }
+
+  /* Darkens a card as the next one slides over it (stack.ts drives opacity) */
+  .card-dim {
+    position: absolute;
+    inset: 0;
+    background: #07080a;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Too short to hold a whole card: a plain list, like on phones (stack.ts matches this) */
+  @media (max-height: 620px) {
+    :global(html.motion) .stack-card {
+      position: relative;
+      top: auto;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .stack-card {
+      grid-template-columns: minmax(0, 1fr);
+      min-height: 0;
+      margin-bottom: 20px;
+      align-items: start;
+    }
+
+    :global(html.motion) .stack-card {
+      position: relative;
+      top: auto;
+    }
+
+    .card-media {
+      order: -1;
+      padding-right: 0;
+      padding-bottom: 0;
+    }
+
+    .shot-phone {
+      display: none;
+    }
+  }
+</style>
