@@ -1,4 +1,5 @@
-import { gsap, motionOn, root } from './motion';
+import { DESKTOP, gsap, motionOn } from './motion';
+import { lockScroll } from './smooth';
 
 // Small tilts for the closed pile, so it looks like a real stack of paper
 const PILE_TILT = [-3, 2, -1.5, 3.5, -2.5, 1.5];
@@ -8,22 +9,32 @@ export function initCerts() {
   if (!deck) return;
   const cards = gsap.utils.toArray<HTMLButtonElement>('[data-deck-card]', deck);
 
-  // Wide screens: the pile fans out while the section scrolls into view.
+  // Wide screens: the pile rises into view, then the section holds still
+  // while the scroll deals the certificates out into a fan.
   if (motionOn()) {
     const mm = gsap.matchMedia();
-    mm.add('(min-width: 901px)', () => {
+    mm.add(DESKTOP, () => {
+      const wrap = deck.closest<HTMLElement>('.deck-wrap') ?? deck;
+      gsap.fromTo(
+        deck,
+        { y: 140, opacity: 0, rotation: -4 },
+        { y: 0, opacity: 1, rotation: 0, duration: 1.1, ease: 'uiOut', scrollTrigger: { trigger: wrap, start: 'top 88%', once: true } },
+      );
+      const fan = gsap.timeline({
+        scrollTrigger: { trigger: wrap, start: 'center 52%', end: '+=80%', pin: true, scrub: 0.6, invalidateOnRefresh: true },
+      });
       cards.forEach((card, i) => {
         const offset = Number(card.dataset.offset ?? 0);
-        gsap.fromTo(
+        fan.fromTo(
           card,
-          { x: 0, y: -i * 3, rotation: PILE_TILT[i % PILE_TILT.length] },
+          { x: 0, y: -i * 3, rotation: PILE_TILT[i % PILE_TILT.length], rotationY: 0 },
           {
             x: () => offset * card.offsetWidth * 0.46,
             y: offset * offset * 7,
             rotation: offset * 4,
-            ease: 'none',
-            scrollTrigger: { trigger: deck, start: 'top 85%', end: 'center 55%', scrub: 0.6, invalidateOnRefresh: true },
+            ease: 'uiInOut',
           },
+          Math.abs(offset) * 0.04,
         );
       });
     });
@@ -32,7 +43,8 @@ export function initCerts() {
   // Viewer
   const dialog = document.querySelector<HTMLDialogElement>('[data-cert-dialog]');
   if (!dialog) return;
-  const image = dialog.querySelector<HTMLImageElement>('[data-cert-img]');
+  const media = dialog.querySelector<HTMLElement>('[data-cert-media]');
+  let image: HTMLImageElement | null = null;
   const title = dialog.querySelector<HTMLElement>('[data-cert-title]');
   const meta = dialog.querySelector<HTMLElement>('[data-cert-meta]');
   const verify = dialog.querySelector<HTMLAnchorElement>('[data-cert-verify]');
@@ -43,6 +55,14 @@ export function initCerts() {
     if (dialog.open) return;
     opener = from;
     const { full = '', title: name = '', issuer = '', date = '', verify: link = '' } = card.dataset;
+    if (!image && media) {
+      // Created on first open, so the page never carries an image without a source
+      image = document.createElement('img');
+      image.width = 1400;
+      image.height = 1050;
+      image.decoding = 'async';
+      media.append(image);
+    }
     if (image) {
       image.src = full;
       image.alt = `Certificate: ${name}, ${issuer}`;
@@ -54,7 +74,7 @@ export function initCerts() {
       verify.href = link || '#';
     }
     dialog.showModal();
-    root.style.overflow = 'hidden';
+    lockScroll(true);
     requestAnimationFrame(() => requestAnimationFrame(() => dialog.classList.add('is-open')));
   };
 
@@ -62,7 +82,7 @@ export function initCerts() {
     if (!dialog.open || closing) return;
     closing = true;
     dialog.classList.remove('is-open');
-    root.style.overflow = '';
+    lockScroll(false);
     window.setTimeout(
       () => {
         dialog.close();

@@ -7,9 +7,10 @@ const words = statement.split(' ');
 ---
 
 <section class="about container" id="about" aria-labelledby="about-title">
-  <h2 class="section-title" id="about-title"><span class="mask"><span>About</span></span></h2>
+  <div class="about-lead" data-about-pin>
+    <h2 class="section-title" id="about-title"><span class="mask"><span>About</span></span></h2>
 
-  <p class="statement" data-words>
+    <p class="statement" data-words>
     {
       words.map((word, i) => (
         <>
@@ -18,7 +19,8 @@ const words = statement.split(' ');
         </>
       ))
     }
-  </p>
+    </p>
+  </div>
 
   <div class="about-grid">
     <dl class="facts">
@@ -26,7 +28,7 @@ const words = statement.split(' ');
         facts.map((fact) => (
           <div class="fact" data-reveal>
             <dt class="mono">{fact.label}</dt>
-            <dd>{fact.value}</dd>
+            <dd data-count={parseInt(fact.value, 10)} data-suffix={fact.value.replace(/^\d+/, '')}>{fact.value}</dd>
           </div>
         ))
       }
@@ -69,6 +71,11 @@ const words = statement.split(' ');
 <style>
   .about {
     padding-top: var(--section-space);
+    display: grid;
+    gap: clamp(32px, 5vw, 56px);
+  }
+
+  .about-lead {
     display: grid;
     gap: clamp(32px, 5vw, 56px);
   }

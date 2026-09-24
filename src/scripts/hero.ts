@@ -95,17 +95,22 @@ export function initHero() {
   // Decode with the real font so letter boxes do not change size mid-way.
   Promise.race([document.fonts?.ready ?? Promise.resolve(), wait(900)]).then(intro);
 
-  // While scrolling away, the portrait sinks a little into its panel.
-  if (depth) {
-    gsap.to(depth, {
-      yPercent: 8,
-      ease: 'none',
-      scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
-    });
+  // Scrolling away: the two lines of the name slide apart, the copy lifts and
+  // fades, and the portrait tips back as if it is being put down.
+  const copy = hero.querySelector<HTMLElement>('.hero-copy');
+  const exit = gsap.timeline({
+    scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: 0.4 },
+  });
+  if (lines[0]) exit.to(lines[0], { xPercent: -16, ease: 'none' }, 0);
+  if (lines[1]) exit.to(lines[1], { xPercent: 16, ease: 'none' }, 0);
+  if (copy) exit.to(copy, { yPercent: -10, opacity: 0.1, ease: 'none' }, 0);
+  if (figure) {
+    exit.to(figure, { scale: 0.84, rotation: -5, yPercent: -8, transformPerspective: 1100, rotationX: 14, ease: 'none' }, 0);
   }
+  if (depth) exit.to(depth, { yPercent: 10, ease: 'none' }, 0);
 
-  // The portrait leans a few degrees toward the pointer.
-  if (figure && finePointer()) {
+  // The portrait panel leans a few degrees toward the pointer.
+  if (panel && finePointer()) {
     let targetX = 0;
     let targetY = 0;
     let x = 0;
@@ -114,7 +119,7 @@ export function initHero() {
     const loop = () => {
       x += (targetX - x) * 0.08;
       y += (targetY - y) * 0.08;
-      figure.style.transform = `perspective(1100px) rotateX(${y.toFixed(3)}deg) rotateY(${x.toFixed(3)}deg)`;
+      panel.style.transform = `perspective(1100px) rotateX(${y.toFixed(3)}deg) rotateY(${x.toFixed(3)}deg)`;
       frame = Math.abs(targetX - x) > 0.01 || Math.abs(targetY - y) > 0.01 ? requestAnimationFrame(loop) : 0;
     };
     const kick = () => {
@@ -122,8 +127,8 @@ export function initHero() {
     };
     hero.addEventListener('pointermove', (event) => {
       const rect = hero.getBoundingClientRect();
-      targetX = ((event.clientX - rect.left) / rect.width - 0.5) * 7;
-      targetY = ((event.clientY - rect.top) / rect.height - 0.5) * -5;
+      targetX = ((event.clientX - rect.left) / rect.width - 0.5) * 9;
+      targetY = ((event.clientY - rect.top) / rect.height - 0.5) * -6;
       kick();
     });
     hero.addEventListener('pointerleave', () => {

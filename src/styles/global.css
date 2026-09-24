@@ -69,10 +69,35 @@ html {
   background: var(--bg);
   /* keeps the width steady when a dialog locks scrolling */
   scrollbar-gutter: stable;
+  /* Motion slides things past the sides; clip (unlike hidden) keeps sticky and pins working,
+     and stops phones from zooming out to fit the overflow */
+  overflow-x: clip;
+}
+
+main {
+  overflow-x: clip;
 }
 
 html.motion {
   scroll-behavior: smooth;
+}
+
+/* Smooth scrolling (Lenis) drives the page itself, so native smoothing stays out of its way */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+html.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+html.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
 }
 
 body {

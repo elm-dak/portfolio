@@ -14,7 +14,7 @@ import { experience } from '../data/site';
       experience.map((role) => (
         <li class="entry" data-entry>
           <p class="when mono">
-            <span>
+            <span data-decode>
               {role.start} to {role.end}
             </span>
             <span class="where">{role.place}</span>
@@ -164,9 +164,34 @@ import { experience } from '../data/site';
     background: var(--line-strong);
   }
 
-  :global(html.motion) .body {
+  :global(html.motion) .body > * {
     opacity: 0;
-    transform: translateY(16px);
+  }
+
+  /* A ring pulses out of the node when the line reaches it */
+  .node::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  :global(html.motion) .entry.is-lit .node::after {
+    animation: node-pulse 900ms var(--ease-out) 1;
+  }
+
+  @keyframes node-pulse {
+    from {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(3.2);
+    }
   }
 
   @media (max-width: 760px) {

@@ -50,6 +50,25 @@ const year = new Date().getFullYear();
     padding-bottom: max(28px, env(safe-area-inset-bottom));
     border-top: 1px solid var(--line);
     overflow: hidden;
+    transition:
+      background-color 700ms var(--ease-in-out),
+      color 700ms var(--ease-in-out),
+      border-color 700ms var(--ease-in-out);
+  }
+
+  .footer.is-inverted {
+    --ink: #f6f7fb;
+    --ink-soft: rgb(246 247 251 / 0.88);
+    --muted: rgb(246 247 251 / 0.74);
+    --line: rgb(246 247 251 / 0.24);
+    --bg-sunken: rgb(246 247 251 / 0.12);
+    --focus: #f6f7fb;
+    background: #2b3be0;
+    color: var(--ink);
+  }
+
+  :global([data-theme='dark']) .footer.is-inverted {
+    background: #1f2bb3;
   }
 
   .wordmark {

@@ -11,7 +11,8 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
+// GitHub Pages redirects /portfolio to /portfolio/, so the canonical URL keeps the slash
+const canonical = new URL(Astro.url.pathname.replace(/\/?$/, '/'), Astro.site).href;
 const ogImage = new URL(withBase('og.png'), Astro.site).href;
 
 const jsonLd = {

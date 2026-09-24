@@ -2,8 +2,9 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Flip } from 'gsap/Flip';
 import { CustomEase } from 'gsap/CustomEase';
+import { SplitText } from 'gsap/SplitText';
 
-gsap.registerPlugin(ScrollTrigger, Flip, CustomEase);
+gsap.registerPlugin(ScrollTrigger, Flip, CustomEase, SplitText);
 gsap.config({ nullTargetWarn: false });
 ScrollTrigger.config({ ignoreMobileResize: true });
 
@@ -23,4 +24,7 @@ export const finePointer = (): boolean => matchMedia('(hover: hover) and (pointe
 
 export const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-export { gsap, ScrollTrigger, Flip };
+/** Wide screens with a mouse: where pins, the horizontal pan and 3D effects run. */
+export const DESKTOP = '(min-width: 901px) and (min-height: 621px)';
+
+export { gsap, ScrollTrigger, Flip, SplitText };

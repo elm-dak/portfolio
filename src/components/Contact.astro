@@ -73,7 +73,7 @@ const title = "Let's talk.";
         <label for="cf-company">Company</label>
         <input id="cf-company" name="company" type="text" tabindex="-1" autocomplete="off" />
       </div>
-      <button class="btn btn-primary submit" type="submit" data-submit>
+      <button class="btn btn-primary submit" type="submit" data-submit data-magnetic="0.25">
         <span data-submit-label>Send message</span>
         <Icon name="send" />
       </button>
@@ -108,6 +108,8 @@ const title = "Let's talk.";
   }
 
   .contact-title {
+    overflow: hidden;
+    padding-block: 0.04em 0.1em;
     font-size: clamp(3.5rem, 10.5vw, 10rem);
     font-weight: 600;
     line-height: 0.95;
@@ -118,6 +120,68 @@ const title = "Let's talk.";
 
   .pc {
     display: inline-block;
+  }
+
+  :global(html.motion) .contact-title .pc {
+    transform: translateY(112%);
+  }
+
+  /* The ending: the section floods with cobalt as it arrives (reveals.ts toggles the class) */
+  .contact {
+    transition:
+      background-color 700ms var(--ease-in-out),
+      color 700ms var(--ease-in-out);
+  }
+
+  .contact.is-inverted {
+    --ink: #f6f7fb;
+    --ink-soft: rgb(246 247 251 / 0.88);
+    --muted: rgb(246 247 251 / 0.74);
+    --line: rgb(246 247 251 / 0.24);
+    --line-strong: rgb(246 247 251 / 0.42);
+    --accent: #f6f7fb;
+    --focus: #f6f7fb;
+    background: #2b3be0;
+    color: var(--ink);
+  }
+
+  :global([data-theme='dark']) .contact.is-inverted {
+    background: #1f2bb3;
+  }
+
+  /* The form stays a light card on the cobalt */
+  .contact.is-inverted .form {
+    --ink: #111318;
+    --ink-soft: #33373f;
+    --muted: #5d626d;
+    --line: #d8dbe1;
+    --line-strong: #b9bec8;
+    --bg: #f3f4f6;
+    --surface: #fbfbfc;
+    --accent: #3b4cf5;
+    --accent-strong: #2f3fe0;
+    --accent-ink: #f6f7fb;
+    --focus: #3b4cf5;
+    color: var(--ink);
+    border-color: transparent;
+    box-shadow: 0 40px 80px -40px rgb(5 8 40 / 0.55);
+  }
+
+  .contact.is-inverted .form .error,
+  .contact.is-inverted .form .form-status.is-error {
+    color: #b3232f;
+  }
+
+  .contact.is-inverted .form [aria-invalid='true'] {
+    border-color: #c62f3d;
+  }
+
+  .contact .channel,
+  .contact .eyebrow,
+  .contact .contact-lede {
+    transition:
+      color 700ms var(--ease-in-out),
+      border-color 700ms var(--ease-in-out);
   }
 
   .pc.sp {

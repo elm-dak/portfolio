@@ -1,4 +1,5 @@
-import { ScrollTrigger, motionOn, root } from './motion';
+import { ScrollTrigger, motionOn } from './motion';
+import { lockScroll, scrollToTarget } from './smooth';
 
 export function initNav() {
   const nav = document.querySelector<HTMLElement>('[data-nav]');
@@ -22,6 +23,18 @@ export function initNav() {
   });
   nav.classList.toggle('is-scrolled', window.scrollY > 8);
   nav.addEventListener('focusin', () => nav.classList.remove('is-hidden'));
+
+  // Reading progress: a thin bar across the top of the screen
+  const progress = document.querySelector<HTMLElement>('[data-progress]');
+  if (progress && motionOn()) {
+    ScrollTrigger.create({
+      start: 0,
+      end: 'max',
+      onUpdate: (self) => {
+        progress.style.transform = `scaleX(${self.progress.toFixed(4)})`;
+      },
+    });
+  }
 
   // Active section: the link lights up and the bar slides under it.
   const list = nav.querySelector<HTMLElement>('.nav-links');
@@ -82,7 +95,7 @@ export function initNav() {
     menu.showModal();
     menuOpen = true;
     openButton.setAttribute('aria-expanded', 'true');
-    root.style.overflow = 'hidden';
+    lockScroll(true);
     requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('is-open')));
   };
 
@@ -91,7 +104,7 @@ export function initNav() {
     menu.classList.remove('is-open');
     menuOpen = false;
     openButton.setAttribute('aria-expanded', 'false');
-    root.style.overflow = '';
+    lockScroll(false);
     window.setTimeout(
       () => {
         menu.close();
@@ -112,7 +125,7 @@ export function initNav() {
       event.preventDefault();
       const target = document.querySelector<HTMLElement>(link.getAttribute('href') ?? '');
       close(() => {
-        target?.scrollIntoView({ behavior: motionOn() ? 'smooth' : 'auto' });
+        if (target) scrollToTarget(target);
         nav.classList.remove('is-hidden');
       });
     });

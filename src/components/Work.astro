@@ -24,7 +24,7 @@ import { selectedWork } from '../data/site';
             style={`--i: ${i}; --card-bg: ${project.theme.bg}; --card-ink: ${project.theme.ink}; --card-muted: ${project.theme.muted}; --card-line: ${project.theme.line};`}
           >
             <div class="card-copy">
-              <p class="card-meta mono">
+              <p class="card-meta mono" data-card-meta>
                 {project.year} · {project.role}
               </p>
               <h3 class="card-name" id={`work-${project.slug}`}>
@@ -37,15 +37,22 @@ import { selectedWork } from '../data/site';
                   <li>{item}</li>
                 ))}
               </ul>
-              <a class="card-link" href={project.url} target="_blank" rel="noopener" data-arrow="out">
+              <a class="card-link" href={project.url} target="_blank" rel="noopener" data-arrow="out" data-magnetic="0.25">
                 Open {project.name}
                 <Icon name="arrow-up-right" />
                 <span class="sr-only">(opens in a new tab)</span>
               </a>
             </div>
 
-            <div class="card-media">
-              <div class="shot shot-desktop">
+            <div class="card-media" data-card-media>
+              <!-- Same link as the button, for mouse users; kept out of the tab order and hidden from screen readers -->
+              <a class="media-link" href={project.url} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true" data-follow-area>
+                <span class="follow" data-follow>
+                  Open
+                  <Icon name="arrow-up-right" />
+                </span>
+              </a>
+              <div class="shot shot-desktop" data-shot-desktop>
                 <Image
                   src={project.desktop}
                   alt={`${project.name} home page on a desktop screen`}
@@ -55,7 +62,7 @@ import { selectedWork } from '../data/site';
                   quality={78}
                 />
               </div>
-              <div class="shot shot-phone">
+              <div class="shot shot-phone" data-shot-phone>
                 <Image
                   src={project.phone}
                   alt={`${project.name} on a phone`}
@@ -129,6 +136,8 @@ import { selectedWork } from '../data/site';
   }
 
   .card-name {
+    overflow: hidden;
+    padding-bottom: 0.06em;
     font-size: clamp(2.5rem, 5vw, 4.5rem);
     font-weight: 640;
     line-height: 1;
@@ -202,6 +211,44 @@ import { selectedWork } from '../data/site';
     position: relative;
     padding-bottom: 7%;
     padding-right: 5%;
+  }
+
+  /* Covers the screenshots; the pill follows the pointer inside it (stack.ts) */
+  .media-link {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  .follow {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px;
+    border-radius: 999px;
+    background: var(--card-ink);
+    color: var(--card-bg);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    /* GSAP owns the position (centred on the pointer), so no CSS translate here */
+    transform: scale(0.6);
+  }
+
+  .follow :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .media-link {
+      display: none;
+    }
   }
 
   .shot {

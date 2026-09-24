@@ -11,6 +11,8 @@ const links = [
 ];
 ---
 
+<div class="progress" aria-hidden="true" data-progress></div>
+
 <header class="nav" data-nav>
   <div class="nav-inner container">
     <a class="nav-brand" href="#top">
@@ -39,7 +41,7 @@ const links = [
         <Icon name="moon" class="i-moon" />
         <Icon name="sun" class="i-sun" />
       </button>
-      <a class="btn btn-primary btn-sm nav-cta" href="#contact">Let's talk</a>
+      <a class="btn btn-primary btn-sm nav-cta" href="#contact" data-magnetic="0.3">Let's talk</a>
       <button
         class="icon-btn nav-menu-btn"
         type="button"
@@ -90,6 +92,21 @@ const links = [
 </dialog>
 
 <style>
+  .progress {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 45;
+    height: 2px;
+    background: var(--accent);
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+    pointer-events: none;
+  }
+
+  :global(html:not(.motion)) .progress {
+    display: none;
+  }
+
   .nav {
     position: fixed;
     inset: 0 0 auto;

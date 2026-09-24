@@ -1,0 +1,95 @@
+---
+// Decorative: repeats what the hero says in giant moving type, so it is hidden from screen readers.
+const rows = [
+  { words: ['AI agents', 'Data pipelines', 'LLM apps', 'Dashboards', 'APIs'], style: 'solid', dir: -1 },
+  { words: ['Web apps', 'Mobile apps', 'Cloud', 'DevOps', 'Automation'], style: 'outline', dir: 1 },
+];
+---
+
+<section class="band" aria-hidden="true" data-band>
+  {
+    rows.map((row) => (
+      <div class={`band-row ${row.style}`} data-band-row data-dir={row.dir}>
+        <div class="band-track" data-band-track>
+          {[0, 1].map(() => (
+            <div class="band-set">
+              {row.words.map((word) => (
+                <>
+                  <span class="band-word">{word}</span>
+                  <span class="band-sep" />
+                </>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+</section>
+
+<style>
+  .band {
+    padding-block: clamp(40px, 6vw, 88px) 0;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .band-row {
+    overflow: hidden;
+    padding-block: 0.06em;
+    font-size: clamp(3.25rem, 9.5vw, 9rem);
+    font-weight: 660;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    white-space: nowrap;
+  }
+
+  .band-row + .band-row {
+    margin-top: -0.04em;
+  }
+
+  .band-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+  }
+
+  .band-set {
+    display: flex;
+    align-items: center;
+    flex: none;
+  }
+
+  .band-word {
+    padding-inline: 0.18em;
+  }
+
+  .solid {
+    color: var(--ink);
+  }
+
+  .outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--ink);
+  }
+
+  .band-sep {
+    display: block;
+    width: 0.18em;
+    height: 0.18em;
+    margin-inline: 0.12em;
+    border-radius: 50%;
+    background: var(--accent);
+    flex: none;
+  }
+
+  .outline .band-sep {
+    background: transparent;
+    box-shadow: inset 0 0 0 2px var(--accent);
+  }
+
+  /* Starts on the second copy for rows that move right, so there is never an edge */
+  .band-row[data-dir='1'] .band-track {
+    transform: translateX(-50%);
+  }
+</style>
